@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	<bean id="clientNioEventLoopGroup" class="io.netty.channel.nio.NioEventLoopGroup" destroy-method="shutdownGracefully"/>
+	
+	<util:map id="clientOptions" map-class="java.util.LinkedHashMap">
+		<entry value="true" value-type="java.lang.Boolean">
+			<key><util:constant static-field="io.netty.channel.ChannelOption.SO_KEEPALIVE" /></key>
+		</entry>
+	</util:map>
+	
+	<bean scope="prototype" id="frameDecoder" class="io.netty.handler.codec.LengthFieldBasedFrameDecoder" 
+				c:maxFrameLength="1048576" 
+				c:lengthFieldOffset="0"
+				c:lengthFieldLength="4"
+				c:lengthAdjustment="0"
+				c:initialBytesToStrip="4" />
+	<bean scope="prototype" id="bytesDecoder" class="io.netty.handler.codec.bytes.ByteArrayDecoder" />
+	<bean id="frameEncoder" class="io.netty.handler.codec.LengthFieldPrepender" c:lengthFieldLength="4" />
+	<bean id="bytesEncoder" class="io.netty.handler.codec.bytes.ByteArrayEncoder" />
+	<bean id="handler" class="org.danielli.xultimate.netty.ClientHandler" c:deserializer-ref="protobufDeserializer" c:serializer-ref="protobufSerializer" />
+	<util:map id="channelHandlerAdapterBeanNameMap" map-class="java.util.LinkedHashMap">
+		<entry key="frameDecoder" >
+			<idref bean="frameDecoder"/>
+		</entry>
+		<entry key="bytesDecoder">
+			<idref bean="bytesDecoder"/>
+		</entry>
+		<entry key="frameEncoder">
+			<idref bean="frameEncoder" />
+		</entry>
+		<entry key="bytesEncoder">
+			<idref bean="bytesEncoder" />
+		</entry>
+		<entry key="handler">
+			<idref bean="handler" />
+		</entry>
+	</util:map>
+	
+	<bean id="clientChannelInitializer" class="org.danielli.xultimate.netty.support.ChannelInitializerFactoryBean"
+		 p:channelHandlerAdapterBeanNameMap-ref="channelHandlerAdapterBeanNameMap"/>
+	
+	<bean id="clientBootstrapFactoryBean" class="org.danielli.xultimate.netty.support.BootstrapFactoryBean"
+		p:group-ref="clientNioEventLoopGroup"
+		p:options-ref="clientOptions"
+		p:channelHandler-ref="clientChannelInitializer"/>
+</beans>

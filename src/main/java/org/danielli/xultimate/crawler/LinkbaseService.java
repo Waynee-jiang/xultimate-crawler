@@ -3,6 +3,12 @@ package org.danielli.xultimate.crawler;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 链接库服务。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 public interface LinkbaseService {
 	
 	/**
@@ -33,11 +39,6 @@ public interface LinkbaseService {
 	 * @param linkId url链接ID。
 	 */
 	void unableLinkId(String linkId);
-	
-	/**
-	 * 处理不可用链接url。
-	 */
-	void unableLinkIdHandle();
 	
 	/**
 	 * 添加链接列表。

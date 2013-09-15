@@ -3,7 +3,8 @@ package org.danielli.xultimate.crawler.support;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.danielli.xultimate.context.format.Formatter;
 import org.danielli.xultimate.context.kvStore.redis.RedisException;
@@ -18,15 +19,16 @@ import org.danielli.xultimate.util.crypto.DigestUtils;
 import org.danielli.xultimate.util.crypto.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
 
+@Service("linkbaseService")
 public class LinkbaseServiceSupport implements LinkbaseService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(LinkbaseServiceSupport.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger("linkbase");
 	
 	public static final String MAIN_QUEUE = "mainQueue";
 	
@@ -38,18 +40,22 @@ public class LinkbaseServiceSupport implements LinkbaseService {
 	
 	public static final String TABLE_NAME_PATTERN = "crawler:${#linkId}";
 	
+	public static final String LINK_CREATE_TIME = "createTime";
+	
 	public static final String LINK_COLUMN_NAME = "link";
 	
-	@Autowired
+	public static final String PARENT_LINK_COLUMN_NAME = "plink";
+	
+	@Resource(name = "shardedJedisTemplate")
 	private ShardedJedisTemplate shardedJedisTemplate;
 
-	@Autowired
+	@Resource(name = "fastJSONTemplate")
 	private JSONTemplate jsonTemplate;
 	
-	@Autowired
+	@Resource(name = "spelFormatter")
 	private Formatter<String, Map<String, Object>, String> formatter;
 	
-	@Autowired
+	@Resource(name = "threadPoolTaskExecutor")
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	
 	@Override
@@ -135,35 +141,6 @@ public class LinkbaseServiceSupport implements LinkbaseService {
 			}
 		});
 	}
-	
-	@Override
-	public void unableLinkIdHandle() {
-		threadPoolTaskExecutor.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					shardedJedisTemplate.execute(new ShardedJedisCallback() {
-						
-						@Override
-						public void doInShardedJedis(ShardedJedis shardedJedis) {
-							Set<String> unalbeSet = shardedJedis.zrangeByScore(UNABLE_SET, 1, 2);
-							for (String unableLinkId : unalbeSet) {
-								try {
-									shardedJedis.lpush(MAIN_QUEUE, unableLinkId);
-									LOGGER.info("添加" + unableLinkId + "到队列成功");
-								} catch (Exception e) {
-									LOGGER.error("添加" + unableLinkId + "到队列失败: " + e.getMessage(), e);
-								} 
-								
-							}
-						}
-					});
-				} catch (RedisException e) {
-					LOGGER.error(e.getMessage(), e);;
-				}
-			}
-		});
-	}
 
 	@Override
 	public void addLinkUrls(final List<Map<String, Object>> linkUrlList) {
@@ -197,7 +174,7 @@ public class LinkbaseServiceSupport implements LinkbaseService {
 						}
 					});
 				} catch (Exception e) {
-					LOGGER.error(e.getMessage(), e);;
+					LOGGER.error("未知错误" + e.getMessage(), e);
 				}		
 			}
 		});
