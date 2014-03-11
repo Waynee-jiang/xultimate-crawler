@@ -4,7 +4,6 @@
 	
 	<groupId>org.danielli.xultimate</groupId>
 	<artifactId>xultimate-crawler</artifactId>
-	<packaging>war</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	
 	<name>The X-Ultimate Crawler</name>
@@ -15,7 +14,7 @@
 		<jdk.version>1.7</jdk.version>
 		<junit.version>4.11</junit.version>
 		<org.jsoup.verison>1.7.2</org.jsoup.verison>
-		<io.netty.version>4.0.12.Final</io.netty.version>
+		<io.netty.version>5.0.0.Alpha1</io.netty.version>
 	</properties>
 	
 	<dependencies>
@@ -37,6 +36,11 @@
 		<dependency>
 		    <groupId>io.netty</groupId>
 		    <artifactId>netty-codec</artifactId>
+		    <version>${io.netty.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-handler</artifactId>
 		    <version>${io.netty.version}</version>
 		</dependency>
 		<dependency>
