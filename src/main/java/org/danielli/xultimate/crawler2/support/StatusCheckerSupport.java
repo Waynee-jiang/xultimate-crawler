@@ -5,6 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * 状态检测器默认实现类。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 @Service("statusCheckerSupport")
 public class StatusCheckerSupport implements StatusChecker {
 

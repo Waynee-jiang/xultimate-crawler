@@ -25,6 +25,12 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
 
+/**
+ * 链接库处理器默认实现类。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 @Service("linkbaseHandlerSupport")
 public class LinkbaseHandlerSupport implements LinkbaseHandler {
 

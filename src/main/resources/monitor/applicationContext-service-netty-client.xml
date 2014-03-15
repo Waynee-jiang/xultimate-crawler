@@ -36,39 +36,28 @@
 		</entry>
 	</util:map>
 	
-	<bean scope="prototype" id="frameDecoder" class="io.netty.handler.codec.LengthFieldBasedFrameDecoder" 
-				c:maxFrameLength="1048576" 
-				c:lengthFieldOffset="0"
-				c:lengthFieldLength="4"
-				c:lengthAdjustment="0"
-				c:initialBytesToStrip="4" />
-	<bean scope="prototype" id="bytesDecoder" class="io.netty.handler.codec.bytes.ByteArrayDecoder" />
-	<bean id="frameEncoder" class="io.netty.handler.codec.LengthFieldPrepender" c:lengthFieldLength="4" />
-	<bean id="bytesEncoder" class="io.netty.handler.codec.bytes.ByteArrayEncoder" />
-	<bean id="handler" class="org.danielli.xultimate.crawler2.monitor.ClientHandler" c:deserializer-ref="protobufDeserializer" c:serializer-ref="protobufSerializer" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtobufCodec" c:rpcSerializer-ref="rpcProtobufSerializer" />
+	<!-- 
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtostuffCodec" c:rpcSerializer-ref="rpcProtostuffSerializer" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.KryoCodec" c:rpcSerializer-ref="rpcKryoSerializer" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ObjectCodec" c:rpcSerializer-ref="objectSerializer" />
+	 -->
+	<bean id="handler" class="org.danielli.xultimate.crawler2.monitor.ClientHandler" />
 	<util:map id="channelHandlerAdapterBeanNameMap" map-class="java.util.LinkedHashMap">
-		<entry key="frameDecoder" >
-			<idref bean="frameDecoder"/>
-		</entry>
-		<entry key="bytesDecoder">
-			<idref bean="bytesDecoder"/>
-		</entry>
-		<entry key="frameEncoder">
-			<idref bean="frameEncoder" />
-		</entry>
-		<entry key="bytesEncoder">
-			<idref bean="bytesEncoder" />
+		<entry key="codec">
+			<idref bean="codec"/>
 		</entry>
 		<entry key="handler">
 			<idref bean="handler" />
 		</entry>
 	</util:map>
 	
-	<bean id="clientChannelInitializer" class="org.danielli.xultimate.netty.support.ChannelInitializerFactoryBean"
+	<bean id="clientChannelInitializer" class="org.danielli.xultimate.context.net.netty.support.SocketChannelInitializerFactoryBean"
 		 p:channelHandlerAdapterBeanNameMap-ref="channelHandlerAdapterBeanNameMap"/>
 	
-	<bean id="clientBootstrapFactoryBean" class="org.danielli.xultimate.netty.support.BootstrapFactoryBean"
+	<bean id="clientBootstrapFactoryBean" class="org.danielli.xultimate.context.net.netty.support.BootstrapFactoryBean"
 		p:group-ref="clientNioEventLoopGroup"
 		p:options-ref="clientOptions"
-		p:channelHandler-ref="clientChannelInitializer"/>
+		p:channelHandler-ref="clientChannelInitializer"
+		p:channelClass="io.netty.channel.socket.nio.NioSocketChannel" />
 </beans>

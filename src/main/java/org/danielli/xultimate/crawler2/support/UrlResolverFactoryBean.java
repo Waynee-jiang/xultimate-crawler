@@ -9,6 +9,12 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@code Collection<AbstractUrlResolver> }的Factory Bean形式。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 @Service("UrlResolverCollection")
 @DependsOn("beanFactoryContext")
 public class UrlResolverFactoryBean implements FactoryBean<Collection<AbstractUrlResolver>> {

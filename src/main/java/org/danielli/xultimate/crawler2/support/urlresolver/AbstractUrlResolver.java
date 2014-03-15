@@ -6,6 +6,12 @@ import org.danielli.xultimate.crawler2.LinkbaseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 抽象URL解析器，添加优先级功能。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 public abstract class AbstractUrlResolver implements UrlResolver {
 	
 	protected final Logger LOGGER = LoggerFactory.getLogger(getClass());

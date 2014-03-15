@@ -6,6 +6,12 @@ import org.jsoup.nodes.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Jsoup URL解析器，添加URL响应体的解析功能。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 public abstract class JsoupAbstractUrlResolver extends RestTemplateAbstractUrlResolver {
 
 	@Override

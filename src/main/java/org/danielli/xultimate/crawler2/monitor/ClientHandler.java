@@ -2,27 +2,24 @@ package org.danielli.xultimate.crawler2.monitor;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 
 import org.danielli.xultimate.context.util.BeanFactoryContext;
-import org.danielli.xultimate.core.serializer.Deserializer;
-import org.danielli.xultimate.core.serializer.Serializer;
 import org.danielli.xultimate.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 
-public class ClientHandler extends SimpleChannelInboundHandler<byte[]> {
-
-	private Serializer serializer;
-	
-	private Deserializer deserializer;
+/**
+ * Netty的客户端处理器。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
+@Sharable
+public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 
 	private final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
-	
-	public ClientHandler(Serializer serializer, Deserializer deserializer) {
-		this.serializer = serializer;
-		this.deserializer = deserializer;
-	}
 	
 //	private volatile Channel channel;
 //	
@@ -59,12 +56,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<byte[]> {
 	
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		ctx.writeAndFlush(serializer.serialize("shutdown"));
+		ctx.writeAndFlush("shutdown");
 	}
 	
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-		String message = deserializer.deserialize(msg, String.class);
+	protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+		String message = msg.toString();
 		System.out.println(message);
 		if (StringUtils.equals("ok", message)) {
 			ctx.close();

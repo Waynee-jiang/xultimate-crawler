@@ -11,6 +11,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import redis.clients.jedis.ShardedJedis;
 
+/**
+ * 数据倒换工具。将不可用Set中的链接重新加入到欲执行Queue。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 public class UnableHandler {
 	
 	public static void main(String[] args) {

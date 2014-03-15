@@ -2,62 +2,47 @@ package org.danielli.xultimate.crawler2.monitor;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.danielli.xultimate.core.serializer.Deserializer;
-import org.danielli.xultimate.core.serializer.Serializer;
 import org.danielli.xultimate.crawler2.StatusChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 提供了各种可以覆盖的事件处理方法。
+ * Netty的服务端处理器，提供了各种可以覆盖的事件处理方法。
  * 
- * @author toc
- * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
  */
-public class ServerHandler extends SimpleChannelInboundHandler<byte[]> {
+@Sharable
+public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 
-	private Serializer serializer;
-	private Deserializer deserializer;
 	private StatusChecker statusChecker;
-	
-	private ChannelHandlerContext handlerContext;
-
-	public ChannelFuture publish(String message) {
-		return handlerContext.writeAndFlush(serializer.serialize(message));
-	}
 	
 	private final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 	
-	public ServerHandler(Serializer serializer, Deserializer deserializer, StatusChecker statusChecker) {
-		this.serializer = serializer;
-		this.deserializer = deserializer;
+	public ServerHandler(StatusChecker statusChecker) {
 		this.statusChecker = statusChecker;
-	}
-
-	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		handlerContext = ctx;
 	}
 	
 	/**
 	 * 当来自客户端的新数据被接收时，该方法被调用。msg为接收到的消息。
 	 */
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-		String message = deserializer.deserialize(msg, String.class);
+	protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+		String message = msg.toString();
 		if (StringUtils.equals("shutdown", message)) {
-			publish("收到通知，审核关闭...");
+			ctx.writeAndFlush("收到通知，审核关闭...");
 			if (statusChecker.getStatus()) {
 				statusChecker.closeStatus();
-				publish("已打开关闭信号，应用稍后自动关闭...");
+				ctx.writeAndFlush("已打开关闭信号，应用稍后自动关闭...");
 			} else {
-				publish("关闭信号已经开启，请不要重复操作，应用正在关闭中...");
+				ctx.writeAndFlush("关闭信号已经开启，请不要重复操作，应用正在关闭中...");
 			}
-			final ChannelFuture channelFuture = publish("ok");
+			final ChannelFuture channelFuture = ctx.writeAndFlush("ok");
 			channelFuture.addListener(ChannelFutureListener.CLOSE);
 		}
 	}

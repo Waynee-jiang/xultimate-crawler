@@ -14,6 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * URL解析执行器默认实现类。
+ * 
+ * @author Daniel Li
+ * @since 12 Jun 2013
+ */
 @Service("urlResolveExecutorSupport")
 public class UrlResolveExecutorSupport implements UrlResolveExecutor {
 	
