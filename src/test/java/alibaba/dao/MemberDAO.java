@@ -1,9 +1,11 @@
 package alibaba.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.danielli.xultimate.orm.mybatis.MyBatisRepository;
 
 import alibaba.po.Member;
 
+@MyBatisRepository
 public interface MemberDAO {
 
 	/***

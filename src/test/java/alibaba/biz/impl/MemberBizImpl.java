@@ -27,7 +27,7 @@ import alibaba.po.Member;
 @Service("memberBizImpl")
 public class MemberBizImpl implements MemberBiz {
 
-	@Resource(name = "alibabaPrimaryKey1Incrementer")
+	@Resource(name = "memberIncrementer")
 	private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer;
 	
 	@Resource(name = "alibabaShardedJedisTemplate")

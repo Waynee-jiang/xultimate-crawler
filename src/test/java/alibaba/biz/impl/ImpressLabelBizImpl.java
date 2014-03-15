@@ -16,30 +16,32 @@ import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.joda.time.DateTime;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.ShardedJedis;
 import alibaba.biz.ImpressLabelBiz;
 import alibaba.dao.ImpressLabelDAO;
 import alibaba.po.ImpressLabel;
 
+@Service("impressLabelBizImpl")
 public class ImpressLabelBizImpl implements ImpressLabelBiz {
 
 	@Resource(name = "alibabaShardedJedisTemplate")
 	private ShardedJedisTemplate shardedJedisTemplate;
 	
-	@Resource(name = "alibabaMembercachedClient")
+	@Resource(name = "memcachedClient")
 	private MemcachedClient memcachedClient;
 	
-	@Resource(name = "alibabaMembercachedClientMutex")
+	@Resource(name = "memcachedClientMutex")
 	private MemcachedClientMutex memcachedClientMutex;
 	
-	@Resource(name = "alibabaPrimaryKey1Incrementer")
+	@Resource(name = "impressLabelIncrementer")
 	private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer;
 	
 	@Resource(name = "impressLabelDAO")
 	private ImpressLabelDAO impressLabelDAO;
 	
-	@Resource(name = "shardInfoGenerator")
+	@Resource(name = "myBatisShardInfoGenerator")
 	private ShardInfoGenerator shardInfoGenerator;
 	
 	@Override

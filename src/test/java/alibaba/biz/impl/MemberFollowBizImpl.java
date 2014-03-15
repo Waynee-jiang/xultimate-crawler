@@ -5,11 +5,13 @@ import javax.annotation.Resource;
 import org.danielli.xultimate.jdbc.datasource.lookup.RoutingDataSourceUtils;
 import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
+import org.springframework.stereotype.Service;
 
 import alibaba.biz.MemberFollowBiz;
 import alibaba.dao.MemberFollowDAO;
 import alibaba.po.MemberFollow;
 
+@Service("memberFollowBizImpl")
 public class MemberFollowBizImpl implements MemberFollowBiz {
 
 	@Resource(name = "shardInfoGenerator")

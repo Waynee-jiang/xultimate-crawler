@@ -7,20 +7,22 @@ import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.joda.time.DateTime;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.stereotype.Service;
 
 import alibaba.biz.EduExpBiz;
 import alibaba.dao.EduExpDAO;
 import alibaba.po.EduExp;
 
+@Service("eduExpBizImpl")
 public class EduExpBizImpl implements EduExpBiz {
 
-	@Resource(name = "asdfasdf")
+	@Resource(name = "eduExpIncrementer")
 	private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer;
 	
 	@Resource(name = "eduExpDAO")
 	private EduExpDAO eduExpDAO;
 	
-	@Resource(name = "shardInfoGenerator")
+	@Resource(name = "myBatisShardInfoGenerator")
 	private ShardInfoGenerator shardInfoGenerator;
 	
 	@Override

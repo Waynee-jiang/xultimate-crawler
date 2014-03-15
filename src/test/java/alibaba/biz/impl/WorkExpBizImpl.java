@@ -7,14 +7,16 @@ import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.joda.time.DateTime;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.stereotype.Service;
 
 import alibaba.biz.WorkExpBiz;
 import alibaba.dao.WorkExpDAO;
 import alibaba.po.WorkExp;
 
+@Service("workExpBizImpl")
 public class WorkExpBizImpl implements WorkExpBiz {
 
-	@Resource(name = "asdfasdf")
+	@Resource(name = "workExpIncrementer")
 	private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer;
 	
 	@Resource(name = "workExpDAO")

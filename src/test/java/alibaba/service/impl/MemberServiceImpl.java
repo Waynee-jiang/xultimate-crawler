@@ -20,22 +20,22 @@ import alibaba.po.MemberImpressLabel;
 import alibaba.po.WorkExp;
 import alibaba.service.MemberService;
 
-@Service("alibabaMemberServiceImpl")
+@Service("memberServiceImpl")
 public class MemberServiceImpl implements MemberService {
 
-	@Resource(name = "alibabaMemberBizImpl")
+	@Resource(name = "memberBizImpl")
 	private MemberBiz memberBiz;
 	
-	@Resource(name = "alibabaWorkExpBiz")
+	@Resource(name = "workExpBizImpl")
 	private WorkExpBiz workExpBiz;
 	
-	@Resource(name = "alibabaEduExpBiz")
+	@Resource(name = "eduExpBizImpl")
 	private EduExpBiz eduExpBiz;
 	
-	@Resource(name = "alibabaImpressLabelBiz")
+	@Resource(name = "impressLabelBizImpl")
 	private ImpressLabelBiz impressLabelBiz;
 	
-	@Resource(name = "alibabaMemberImpressLabelBiz")
+	@Resource(name = "memberImpressLabelBizImpl")
 	private MemberImpressLabelBiz memberImpressLabelBiz;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MemberServiceImpl.class);

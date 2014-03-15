@@ -35,6 +35,4 @@
 	<context:component-scan base-package="org.danielli.xultimate.shard">
 		<context:exclude-filter type="aspectj" expression="org.danielli.xultimate.web..*"/>
 	</context:component-scan>
-	
-	<bean id="jsonTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
 </beans>

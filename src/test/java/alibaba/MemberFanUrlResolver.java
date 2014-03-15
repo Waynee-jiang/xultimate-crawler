@@ -22,12 +22,12 @@ import alibaba.po.MemberFan;
 import alibaba.service.MemberFanService;
 import alibaba.service.MemberService;
 
-@Service("alibabaMemberFansListener")
+@Service("memberFanUrlResolver")
 public class MemberFanUrlResolver extends JsoupAbstractUrlResolver {
 	
-	@Resource(name = "memberFanService")
+	@Resource(name = "memberFanServiceImpl")
 	private MemberFanService memberFanService;
-	@Resource(name = "memberService")
+	@Resource(name = "memberServiceImpl")
 	private MemberService memberService;
 
 	@Override

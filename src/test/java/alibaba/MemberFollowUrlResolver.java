@@ -22,13 +22,13 @@ import alibaba.po.MemberFollow;
 import alibaba.service.MemberFollowService;
 import alibaba.service.MemberService;
 
-@Service("alibabaMemberFollowsListener")
+@Service("memberFollowUrlResolver")
 public class MemberFollowUrlResolver extends JsoupAbstractUrlResolver {
 	
-	@Resource(name = "alibabaPipelineService")
+	@Resource(name = "memberFollowServiceImpl")
 	private MemberFollowService memberFollowService;
 	
-	@Resource(name = "alibabaMemberServiceImpl")
+	@Resource(name = "memberServiceImpl")
 	private MemberService memberService;
 	
 	@Override

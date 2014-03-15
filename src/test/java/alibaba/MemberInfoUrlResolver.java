@@ -38,7 +38,7 @@ import alibaba.service.MemberService;
 @Service("memberInfoUrlResolver")
 public class MemberInfoUrlResolver extends JsoupAbstractUrlResolver {
 	
-	@Resource(name = "alibabaMemberServiceImpl")
+	@Resource(name = "memberServiceImpl")
 	private MemberService memberService;
 	
 	private SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy年MM月dd日");
