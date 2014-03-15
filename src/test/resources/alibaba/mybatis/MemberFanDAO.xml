@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="alibaba.dao.MemberFanDAO">
+	
+	<insert id="saveMemberFan">
+		INSERT INTO MEMBER_FAN_${memberShardId} (member_id, fan_member_id, create_time)
+		VALUES 
+		(#{memberId}, #{fanMemberId}, #{createTime})
+	</insert>
+	
+</mapper> 

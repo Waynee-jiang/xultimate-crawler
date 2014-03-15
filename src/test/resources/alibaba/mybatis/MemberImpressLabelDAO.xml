@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="alibaba.dao.MemberImpressLabelDAO">
+	
+	<insert id="saveMemberImpressLabel">
+		INSERT INTO MEMBER_IMPRESS_LABEL_${shardId} 
+		(member_id, impress_label_id, create_time) 
+		VALUES 
+		(#{memberId}, #{impressLabelId}, #{createTime})
+	</insert>
+	
+</mapper> 

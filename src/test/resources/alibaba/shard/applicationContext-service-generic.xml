@@ -26,41 +26,15 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-	<context:component-scan base-package="org.danielli.xultimate.crawler" />
-	<!-- 属性置换器 -->
-	<util:properties id="crawlerProperties" location="classpath:crawler/project.properties" />
-	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
-		<ref bean="crawlerProperties"/>
-	</util:list>
-	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
-		<property name="encryptPropertyNames">
-			<value>
-			
-			</value>
-		</property>
-	</bean>
-
-	<bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" depends-on="statusCheckerSupport"
-		p:corePoolSize="${server.threadPool.corePoolSize}" 
-		p:queueCapacity="${server.threadPool.queueCapacity}" 
-		p:maxPoolSize="${server.threadPool.maxPoolSize}" 
-		p:keepAliveSeconds="${server.threadPool.keepAliveSeconds}" 
-		p:allowCoreThreadTimeOut="true"
-		p:daemon="true" 
-		p:threadPriority="5" 
-		p:threadNamePrefix="${server.threadPool.threadNamePrefix}" 
-		p:awaitTerminationSeconds="10000000" 
-		p:waitForTasksToCompleteOnShutdown="true">
-		<property name="rejectedExecutionHandler">
-			<bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
-		</property>
-	</bean>
+		
+	<!-- XML风格支持 -->
+	<aop:config expose-proxy="true" proxy-target-class="true" />
+	<!-- 注解风格支持 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/> 
 	
-	<bean id="spelFormatter" class="org.danielli.xultimate.context.format.support.SpelFormatter">
-		<property name="expressionParser">
-			<bean class="org.springframework.expression.spel.standard.SpelExpressionParser" />
-		</property>
-	</bean>
+	<context:component-scan base-package="org.danielli.xultimate.shard">
+		<context:exclude-filter type="aspectj" expression="org.danielli.xultimate.web..*"/>
+	</context:component-scan>
 	
-	<bean id="fastJSONTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
+	<bean id="jsonTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
 </beans>

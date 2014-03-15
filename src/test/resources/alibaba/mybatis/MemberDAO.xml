@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="alibaba.dao.MemberDAO">
+	
+	<insert id="saveMember">
+		INSERT INTO EDUEXP_${shardId} 
+		(id, alibaba_id, name, sex, identity, email, phone, telephone, fax, 
+		live_province, live_city, address, pcode, position, company_name, company_url_in_alibaba, 
+		credit_year, head_image_url, birthday, blood_type, hometown, income, educat, religion, 
+		profile, interests, self_intr, member_acc, register_time, last_login, create_time, update_time) 
+		VALUES 
+		(
+		#{id}, #{alibabaId}, #{name}, #{sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{identity, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{email}, #{phone}, #{telephone}, #{fax},
+		#{liveProvince}, #{liveCity}, #{address}, #{pcode}, #{position}, #{companyName}, #{companyUrlInAlibaba},
+		#{creditYear}, #{headImageUrl}, #{birthday}, #{bloodType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{hometown}, #{income, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{educat, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{religion, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+		#{profile}, #{interests}, #{selfIntr}, #{memberAcc}, #{registTime}, #{lastLogin}, #{createTime}, #{updateTime}
+		)
+	</insert>
+	
+</mapper> 

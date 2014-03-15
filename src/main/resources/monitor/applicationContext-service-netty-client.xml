@@ -42,7 +42,7 @@
 	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.KryoCodec" c:rpcSerializer-ref="rpcKryoSerializer" />
 	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ObjectCodec" c:rpcSerializer-ref="objectSerializer" />
 	 -->
-	<bean id="handler" class="org.danielli.xultimate.crawler2.monitor.ClientHandler" />
+	<bean id="handler" class="org.danielli.xultimate.crawler.monitor.ClientHandler" />
 	<util:map id="channelHandlerAdapterBeanNameMap" map-class="java.util.LinkedHashMap">
 		<entry key="codec">
 			<idref bean="codec"/>

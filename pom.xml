@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.danielli.xultimate</groupId>
-			<artifactId>xultimate-context-support</artifactId>
+			<artifactId>xultimate-shard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

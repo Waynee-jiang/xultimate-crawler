@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+<mapper namespace="alibaba.dao.WorkExpDAO">
+	
+	<insert id="saveWorkExp">
+		INSERT INTO WORKEXP_${shardId} 
+		(id, company_name, industry, scale, department, position, start_date, end_date, remark, member_id, create_time)) 
+		VALUES 
+		(#{id}, #{companyName}, #{industry}, #{scale}, #{department}, #{position}, #{startDate}, #{endDate}, #{remark}, #{memberId}, #{createTime})
+	</insert>
+	
+</mapper> 

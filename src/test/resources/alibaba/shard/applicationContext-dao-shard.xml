@@ -26,41 +26,24 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-	<context:component-scan base-package="org.danielli.xultimate.crawler" />
-	<!-- 属性置换器 -->
-	<util:properties id="crawlerProperties" location="classpath:crawler/project.properties" />
-	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
-		<ref bean="crawlerProperties"/>
-	</util:list>
-	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
-		<property name="encryptPropertyNames">
-			<value>
-			
-			</value>
-		</property>
-	</bean>
-
-	<bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" depends-on="statusCheckerSupport"
-		p:corePoolSize="${server.threadPool.corePoolSize}" 
-		p:queueCapacity="${server.threadPool.queueCapacity}" 
-		p:maxPoolSize="${server.threadPool.maxPoolSize}" 
-		p:keepAliveSeconds="${server.threadPool.keepAliveSeconds}" 
-		p:allowCoreThreadTimeOut="true"
-		p:daemon="true" 
-		p:threadPriority="5" 
-		p:threadNamePrefix="${server.threadPool.threadNamePrefix}" 
-		p:awaitTerminationSeconds="10000000" 
-		p:waitForTasksToCompleteOnShutdown="true">
-		<property name="rejectedExecutionHandler">
-			<bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
-		</property>
+		
+	<!-- 创建数据源 -->
+	<!-- 使用JBoss、WebLogic时使用应用服务器本身提供的数据源。
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/bbt" />
+	 -->
+	 	
+	<bean id="shardDataSource" parent="abstractDataSource"
+		p:url="${datasource.shard.jdbc.url}"
+		p:username="${datasource.shard.jdbc.username}"
+		p:password="${datasource.shard.jdbc.password}"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="${datasource.shard.pool.maxActive}" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="${datasource.shard.pool.minIdle}" />
+	    <property name="minIdle" value="${datasource.shard.pool.minIdle}" />
 	</bean>
 	
-	<bean id="spelFormatter" class="org.danielli.xultimate.context.format.support.SpelFormatter">
-		<property name="expressionParser">
-			<bean class="org.springframework.expression.spel.standard.SpelExpressionParser" />
-		</property>
-	</bean>
-	
-	<bean id="fastJSONTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
+	<jdbc:initialize-database enabled="true" data-source="shardDataSource">
+		<jdbc:script separator=";" execution="INIT" location="classpath:/shard/shard_db_init.sql"/>
+	</jdbc:initialize-database>
 </beans>
