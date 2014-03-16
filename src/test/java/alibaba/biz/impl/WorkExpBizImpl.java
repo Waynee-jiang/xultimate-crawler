@@ -22,7 +22,7 @@ public class WorkExpBizImpl implements WorkExpBiz {
 	@Resource(name = "workExpDAO")
 	private WorkExpDAO workExpDAO;
 	
-	@Resource(name = "shardInfoGenerator")
+	@Resource(name = "myBatisShardInfoGenerator")
 	private ShardInfoGenerator shardInfoGenerator;
 	
 	@Override
@@ -32,8 +32,8 @@ public class WorkExpBizImpl implements WorkExpBiz {
 			DateTime currentTime = new DateTime();
 			workExp.setCreateTime(currentTime.toDate());
 		}
-		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("alibaba_crawler", "MEMBER", workExp.getMemberId());
-		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("alibaba_crawler"));
+		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER", workExp.getMemberId());
+		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 		workExpDAO.saveWorkExp(shardInfo.getPartitionedTableShardId(), workExp);
 	}
 

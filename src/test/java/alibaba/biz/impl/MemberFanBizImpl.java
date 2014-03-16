@@ -14,7 +14,7 @@ import alibaba.po.MemberFan;
 @Service("memberFanBizImpl")
 public class MemberFanBizImpl implements MemberFanBiz {
 
-	@Resource(name = "shardInfoGenerator")
+	@Resource(name = "myBatisShardInfoGenerator")
 	private ShardInfoGenerator shardInfoGenerator;
 	
 	@Resource(name = "memberFanDAO")
@@ -22,8 +22,8 @@ public class MemberFanBizImpl implements MemberFanBiz {
 	
 	@Override
 	public void saveMemberFan(MemberFan memberFan) {
-		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("alibaba_crawler", "IMPRESS_LABEL", memberFan.getMemberId());
-		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("alibaba_crawler"));
+		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER_RELATION", memberFan.getMemberId());
+		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 		memberFanDAO.saveMemberFan(shardInfo.getPartitionedTableShardId(), memberFan);
 
 	}

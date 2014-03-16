@@ -44,6 +44,6 @@
 	</bean>
 	
 	<jdbc:initialize-database enabled="true" data-source="shardDataSource">
-		<jdbc:script separator=";" execution="INIT" location="classpath:/shard/shard_db_init.sql"/>
+		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/shard/shard_db_init.sql"/>
 	</jdbc:initialize-database>
 </beans>

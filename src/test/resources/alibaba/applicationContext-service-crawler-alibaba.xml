@@ -26,38 +26,16 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+		
+	<!-- 会引发JedisConnectionException -->
+	<bean id="alibabaJedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" p:maxActive="500" p:maxIdle="300" p:maxWait="10000" p:testOnBorrow="true" />
+	<util:list id="alibabaJedisShardInfos">
+		<!-- 会引发SocketTimeoutException -->
+		<bean class="redis.clients.jedis.JedisShardInfo" c:host="127.0.0.1" c:port="6381" c:timeout="10000" c:weight="1" />
+	</util:list>
+	<util:constant id="alibabaJedisAlgo" static-field="redis.clients.util.Hashing.MURMUR_HASH" />
+	<util:constant id="alibabaJedisKeyTagPattern" static-field="redis.clients.util.Sharded.DEFAULT_KEY_TAG_PATTERN" />
+	<bean id="alibabaShardedJedisPool" class="redis.clients.jedis.ShardedJedisPool" c:poolConfig-ref="alibabaJedisPoolConfig" c:shards-ref="alibabaJedisShardInfos" c:algo-ref="alibabaJedisAlgo" c:keyTagPattern-ref="alibabaJedisKeyTagPattern" destroy-method="destroy" />	
 
-	<bean id="alibabaDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
-		<property name="url" value="jdbc:mysql://localhost:3306/crawler_db?useUnicode=true&amp;characterEncoding=UTF-8" />
-	    <property name="username" value="crawler_user" />
-	    <property name="password" value="crawler_user" />
-	    <!-- 配置最大 -->
-	    <property name="maxActive" value="20" />
-	    <!-- 配置初始化大小、最小 -->
-	    <property name="initialSize" value="10" />
-	    <property name="minIdle" value="10" />   	    
-	    <property name="maxWait" value="60000" />
-	    <property name="timeBetweenEvictionRunsMillis" value="60000" />
-	    <property name="minEvictableIdleTimeMillis" value="300000" />
-	    <property name="validationQuery" value="SELECT 'x'" />
-	    <property name="testWhileIdle" value="true" />
-	    <property name="testOnBorrow" value="false" />
-	    <property name="testOnReturn" value="false" />
-	    <property name="timeBetweenLogStatsMillis" value="300000" />
-	    <property name="removeAbandoned" value="true" /> 
-    	<property name="removeAbandonedTimeout" value="1800" />
-    	<property name="logAbandoned" value="true" />
-	    <property name="poolPreparedStatements" value="false" />
-	    <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
-	</bean>
-    
-    <jdbc:initialize-database enabled="true" data-source="alibabaDataSource">
-		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba_init.sql"/>
-	</jdbc:initialize-database>
-    
-    <bean id="alibabaJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" p:dataSource-ref="alibabaDataSource" />
-	
-	<bean id="alibabaTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="alibabaDataSource" />
-	
-	<tx:annotation-driven mode="proxy" order="1001" proxy-target-class="true" transaction-manager="alibabaTransactionManager" />
+	<bean id="alibabaShardedJedisTemplate" class="org.danielli.xultimate.context.kvStore.redis.jedis.support.ShardedJedisTemplate" p:shardedJedisPool-ref="alibabaShardedJedisPool" />
 </beans>

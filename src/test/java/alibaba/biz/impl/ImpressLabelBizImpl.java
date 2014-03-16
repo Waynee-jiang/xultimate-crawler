@@ -86,8 +86,8 @@ public class ImpressLabelBizImpl implements ImpressLabelBiz {
 			if (impressLabel.getCreateTime() == null) {
 				impressLabel.setCreateTime(new DateTime().toDate());
 			}
-			ShardInfo shardInfo = shardInfoGenerator.createShardInfo("alibaba_crawler", "IMPRESS_LABEL", impressLabel.getId());
-			RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("alibaba_crawler"));
+			ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "IMPRESS_LABEL", impressLabel.getId());
+			RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 			impressLabelDAO.saveImpressLabel(shardInfo.getPartitionedTableShardId(), impressLabel);
 		}
 	}

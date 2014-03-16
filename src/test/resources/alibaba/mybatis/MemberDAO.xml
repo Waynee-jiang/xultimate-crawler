@@ -3,7 +3,7 @@
 <mapper namespace="alibaba.dao.MemberDAO">
 	
 	<insert id="saveMember">
-		INSERT INTO EDUEXP_${shardId} 
+		INSERT INTO MEMBER_${shardId} 
 		(id, alibaba_id, name, sex, identity, email, phone, telephone, fax, 
 		live_province, live_city, address, pcode, position, company_name, company_url_in_alibaba, 
 		credit_year, head_image_url, birthday, blood_type, hometown, income, educat, religion, 

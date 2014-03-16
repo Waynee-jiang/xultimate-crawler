@@ -33,16 +33,16 @@ public class MemberBizImpl implements MemberBiz {
 	@Resource(name = "alibabaShardedJedisTemplate")
 	private ShardedJedisTemplate shardedJedisTemplate;
 	
-	@Resource(name = "alibabaMembercachedClient")
+	@Resource(name = "memcachedClient")
 	private MemcachedClient memcachedClient;
 	
-	@Resource(name = "alibabaMembercachedClientMutex")
+	@Resource(name = "memcachedClientMutex")
 	private MemcachedClientMutex memcachedClientMutex;
 	
 	@Resource(name = "memberDAO")
 	private MemberDAO memberDAO;
 	
-	@Resource(name = "shardInfoGenerator")
+	@Resource(name = "myBatisShardInfoGenerator")
 	private ShardInfoGenerator shardInfoGenerator;
 	
 	@Override
@@ -87,8 +87,8 @@ public class MemberBizImpl implements MemberBiz {
 			if (member.getUpdateTime() == null) {
 				member.setUpdateTime(member.getCreateTime());
 			}
-			ShardInfo shardInfo = shardInfoGenerator.createShardInfo("alibaba_crawler", "MEMBER", member.getId());
-			RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("alibaba_crawler"));
+			ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER", member.getId());
+			RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 			memberDAO.saveMember(shardInfo.getPartitionedTableShardId(), member);
 		}
 	}

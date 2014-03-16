@@ -18,7 +18,7 @@ public class MemberImpressLabelBizImpl implements MemberImpressLabelBiz {
 	@Resource(name = "memberImpressLabelDAO")
 	private MemberImpressLabelDAO memberImpressLabelDAO;
 	
-	@Resource(name = "shardInfoGenerator")
+	@Resource(name = "myBatisShardInfoGenerator")
 	private ShardInfoGenerator shardInfoGenerator;
 	
 	@Override
@@ -26,8 +26,8 @@ public class MemberImpressLabelBizImpl implements MemberImpressLabelBiz {
 		if (memberImpressLabel.getCreateTime() == null) {
 			memberImpressLabel.setCreateTime(new DateTime().toDate());
 		}
-		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("alibaba_crawler", "MEMBER", memberImpressLabel.getMemberId());
-		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("alibaba_crawler"));
+		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER", memberImpressLabel.getMemberId());
+		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 		memberImpressLabelDAO.saveMemberImpressLabel(shardInfo.getPartitionedTableShardId(), memberImpressLabel);
 	}
 

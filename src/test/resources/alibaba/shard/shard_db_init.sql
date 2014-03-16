@@ -1,17 +1,17 @@
 CREATE TABLE IF NOT EXISTS `XULTIMATE_VIRTUAL_DATABASE` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ix_name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT IGNORE INTO XULTIMATE_VIRTUAL_DATABASE(id, name) VALUES(1, 'crawler');
+INSERT IGNORE INTO XULTIMATE_VIRTUAL_DATABASE(id, name) VALUES(1, 'crawler_db');
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_VIRTUAL_TABLE` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `virtual_database_id` bigint(20) NOT NULL,
+  `virtual_database_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ix_name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -20,14 +20,14 @@ INSERT IGNORE INTO XULTIMATE_VIRTUAL_TABLE(id, name, virtual_database_id) VALUES
 INSERT IGNORE INTO XULTIMATE_VIRTUAL_TABLE(id, name, virtual_database_id) VALUES(3, 'IMPRESS_LABEL', 1);
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_VIRTUAL_TABLE_INTERVAL` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` timestamp NULL,
-  `virtual_table_id` bigint(20) NOT NULL,
-  `start_interval` bigint(20) NOT NULL,
-  `end_interval` bigint(20) NOT NULL,
+  `update_time` timestamp NOT NULL,
+  `virtual_table_id` bigint NOT NULL,
+  `start_interval` bigint NOT NULL,
+  `end_interval` bigint NOT NULL,
   `available` char(0) DEFAULT NULL,
-  `hash_values_count` int(11) NOT NULL,
+  `hash_values_count` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ix_virtualTableId` (`virtual_table_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -40,7 +40,7 @@ INSERT IGNORE INTO XULTIMATE_VIRTUAL_TABLE_INTERVAL(id, virtual_table_id, start_
 
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_VIRTUAL_SOCKET` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `address` varchar(255) NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -52,9 +52,9 @@ VALUES
 (2, '192.168.1.3:3306');
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_VIRTUAL_SOCKET_BIND_RECORD` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `virtual_table_interval_id` bigint(20) NOT NULL,
-  `virtual_socket_id` bigint(20) NOT NULL,	
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `virtual_table_interval_id` bigint NOT NULL,
+  `virtual_socket_id` bigint NOT NULL,	
   `hash_values_json` varchar(255) NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -74,9 +74,9 @@ VALUES
 (10, 5, 2, '[1]');
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_PARTITIONED_TABLE` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `virtual_socket_bind_record_id` bigint(20) NOT NULL,
-  `shard_id` bigint(20) NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `virtual_socket_bind_record_id` bigint NOT NULL,
+  `shard_id` bigint NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `ix_virtualSocketBindRecordId` (`virtual_socket_bind_record_id`) USING BTREE
@@ -123,10 +123,10 @@ VALUES
 (38, 10, 1);
 
 CREATE TABLE IF NOT EXISTS `XULTIMATE_PARTITIONED_TABLE_INTERVAL` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `partitioned_table_id` bigint(20) NOT NULL,
-  `start_interval` bigint(20) NOT NULL,
-  `end_interval` bigint(20) NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `partitioned_table_id` bigint NOT NULL,
+  `start_interval` bigint NOT NULL,
+  `end_interval` bigint NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `ix_partitionedTableId` (`partitioned_table_id`) USING BTREE

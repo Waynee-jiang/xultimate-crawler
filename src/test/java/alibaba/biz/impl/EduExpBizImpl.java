@@ -32,8 +32,8 @@ public class EduExpBizImpl implements EduExpBiz {
 			DateTime currentTime = new DateTime();
 			eduExp.setCreateTime(currentTime.toDate());
 		}
-		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("alibaba_crawler", "MEMBER", eduExp.getMemberId());
-		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("alibaba_crawler"));
+		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER", eduExp.getMemberId());
+		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 		eduExpDAO.saveEduExp(shardInfo.getPartitionedTableShardId(), eduExp);
 	}
 
