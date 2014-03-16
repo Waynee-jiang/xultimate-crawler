@@ -4,9 +4,9 @@
 	
 	<insert id="saveImpressLabel">
 		INSERT INTO IMPRESS_LABEL_${shardId} 
-		(id, label_name, create_time)) 
+		(id, label_name, create_time)
 		VALUES 
-		(#{id}, #{labelName}, #{createTime})
+		(#{impressLabel.id}, #{impressLabel.labelName}, #{impressLabel.createTime})
 	</insert>
 	
 </mapper> 

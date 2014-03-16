@@ -4,9 +4,11 @@
 	
 	<insert id="saveEduExp">
 		INSERT INTO EDUEXP_${shardId} 
-		(id, school_name, educat, specialty, start_date, end_date, member_id, create_time)) 
+		(id, school_name, educat, specialty, start_date, end_date, member_id, create_time)
 		VALUES 
-		(#{id}, #{schoolName}, #{educat, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{specialty}, #{startDate}, #{endDate}, #{memberId}, #{createTime})
+		(#{eduExp.id}, #{eduExp.schoolName}, 
+		#{eduExp.educat, javaType=alibaba.po.e.EducatType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+		#{eduExp.specialty}, #{eduExp.startDate}, #{eduExp.endDate}, #{eduExp.memberId}, #{eduExp.createTime})
 	</insert>
 	
 </mapper> 

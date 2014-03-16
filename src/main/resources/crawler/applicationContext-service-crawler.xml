@@ -27,19 +27,6 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 	<context:component-scan base-package="org.danielli.xultimate.crawler" />
-	<!-- 属性置换器 -->
-	<util:properties id="crawlerProperties" location="classpath:crawler/project.properties" />
-	<util:list id="encryptPropertyPlaceholderConfigurerLocalArray">
-		<ref bean="crawlerProperties"/>
-	</util:list>
-	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="encryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
-		<property name="encryptPropertyNames">
-			<value>
-			
-			</value>
-		</property>
-	</bean>
-
 	<bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" depends-on="statusCheckerSupport"
 		p:corePoolSize="${server.threadPool.corePoolSize}" 
 		p:queueCapacity="${server.threadPool.queueCapacity}" 
@@ -56,11 +43,11 @@
 		</property>
 	</bean>
 	
-	<bean id="spelFormatter" class="org.danielli.xultimate.context.format.support.SpelFormatter">
+	<bean id="formatter" class="org.danielli.xultimate.context.format.support.SpelFormatter">
 		<property name="expressionParser">
 			<bean class="org.springframework.expression.spel.standard.SpelExpressionParser" />
 		</property>
 	</bean>
 	
-	<bean id="fastJSONTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
+	<bean id="jsonTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
 </beans>

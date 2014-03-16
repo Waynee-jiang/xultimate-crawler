@@ -37,6 +37,9 @@ public class UrlResolveScheduler {
 	
 	@Resource(name = "statusCheckerSupport")
 	private StatusChecker statusChecker;
+	
+	@Value("${crawler.interval.seconds}")
+	private int crawlerIntervalSeconds = 10;
 
 	/**
 	 * 限制总并发为concurrency个。
@@ -63,11 +66,11 @@ public class UrlResolveScheduler {
 					String linkId = linkbaseHandler.getLinkId();
 					if (linkId == null) {
 						LOGGER.warn("队列已经为空，无法获取新链接");
-						Thread.sleep(20 * 1000);
+						Thread.sleep(crawlerIntervalSeconds * 1000);
 						continue;
 					}
 					threadPoolTaskExecutor.execute(new LinkProcessor(linkId, linkbaseHandler.getLinkUrlByLinkId(linkId)));
-					Thread.sleep(10 * 1000);
+					Thread.sleep(crawlerIntervalSeconds * 1000);
 				} catch (Exception e) {
 					LOGGER.error("获取新链接失败：" + e.getMessage(), e);
 				}

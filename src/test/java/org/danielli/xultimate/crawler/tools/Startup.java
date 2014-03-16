@@ -1,5 +1,6 @@
 package org.danielli.xultimate.crawler.tools;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class Startup {
 			}
 		}
 		
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath*:crawler/applicationContext-*-*.xml", "classpath:monitor/applicationContext-service-netty-server.xml", "classpath:monitor/applicationContext-service-serializer.xml");
+		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath*:crawler/applicationContext-service-crawler-*.xml", "classpath*:crawler/applicationContext-*-*.xml", "classpath:monitor/applicationContext-service-netty-server.xml", "classpath:monitor/applicationContext-service-serializer.xml");
 		if (CollectionUtils.isNotEmpty(linkUrls)) {
 			LinkbaseHandler linkbaseService = ApplicationContextUtils.getBean(applicationContext, LinkbaseHandler.class);
 			linkbaseService.addLinkUrls(linkUrls);

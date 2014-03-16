@@ -5,7 +5,7 @@
 	<insert id="saveMemberFan">
 		INSERT INTO MEMBER_FAN_${memberShardId} (member_id, fan_member_id, create_time)
 		VALUES 
-		(#{memberId}, #{fanMemberId}, #{createTime})
+		(#{memberFan.memberId}, #{memberFan.fanMemberId}, #{memberFan.createTime})
 	</insert>
 	
 </mapper> 

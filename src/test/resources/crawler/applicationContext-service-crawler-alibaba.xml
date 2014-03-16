@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	<util:properties id="primaryKeyProperties" location="classpath:alibaba/primaryKey/databases.properties" />
+	<util:properties id="crawlerProperties" location="classpath:crawler/project.properties" />
+	<util:properties id="memcachedProperties">
+		<prop key="memcached.expireSeconds">600</prop>
+	</util:properties>
+	<util:list id="alibabaEncryptPropertyPlaceholderConfigurerLocalArray">
+		<ref bean="primaryKeyProperties"/>
+		<ref bean="crawlerProperties" />
+		<ref bean="memcachedProperties" />
+	</util:list>
+	<bean parent="encryptPropertyPlaceholderConfigurer" p:propertiesArray-ref="alibabaEncryptPropertyPlaceholderConfigurerLocalArray" p:decryptor-ref="stringStringAESCryptor" >
+		<property name="encryptPropertyNames">
+			<array>
+				<value>datasource.primaryKey.1.jdbc.username</value>
+				<value>datasource.primaryKey.1.jdbc.password</value>
+				<value>datasource.shard.jdbc.username</value>
+				<value>datasource.shard.jdbc.password</value>
+			</array>
+		</property>
+	</bean>
+	<import resource="classpath:/alibaba/shard/applicationContext-service-generic.xml"/>
+	<import resource="classpath:/alibaba/shard/applicationContext-service-memcached.xml"/>
+	<import resource="classpath:/alibaba/shard/applicationContext-service-serializer.xml"/>
+	<import resource="classpath:/alibaba/applicationContext-dao-base.xml"/>
+	<import resource="classpath:/alibaba/primaryKey/applicationContext-dao-primaryKey.xml" />
+	
+	<!-- 会引发JedisConnectionException -->
+	<bean id="alibabaJedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" p:maxActive="500" p:maxIdle="300" p:maxWait="10000" p:testOnBorrow="true" />
+	<util:list id="alibabaJedisShardInfos">
+		<!-- 会引发SocketTimeoutException -->
+		<bean class="redis.clients.jedis.JedisShardInfo" c:host="127.0.0.1" c:port="6381" c:timeout="10000" c:weight="1" />
+	</util:list>
+	<util:constant id="alibabaJedisAlgo" static-field="redis.clients.util.Hashing.MURMUR_HASH" />
+	<util:constant id="alibabaJedisKeyTagPattern" static-field="redis.clients.util.Sharded.DEFAULT_KEY_TAG_PATTERN" />
+	<bean id="alibabaShardedJedisPool" class="redis.clients.jedis.ShardedJedisPool" c:poolConfig-ref="alibabaJedisPoolConfig" c:shards-ref="alibabaJedisShardInfos" c:algo-ref="alibabaJedisAlgo" c:keyTagPattern-ref="alibabaJedisKeyTagPattern" destroy-method="destroy" />	
+
+	<bean id="alibabaShardedJedisTemplate" class="org.danielli.xultimate.context.kvStore.redis.jedis.support.ShardedJedisTemplate" p:shardedJedisPool-ref="alibabaShardedJedisPool" />
+
+	<bean id="shardDataSource" parent="abstractDataSource"
+		p:url="jdbc:mysql://127.0.0.1:3306/shard_db?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+		p:username="shard_db_user"
+		p:password="shard_db_user" lazy-init="false"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="20" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="10" />
+	    <property name="minIdle" value="10" />
+	</bean>
+	
+	<jdbc:initialize-database enabled="true" data-source="shardDataSource">
+		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/shard/shard_db_init.sql"/>
+	</jdbc:initialize-database>
+
+	<bean id="alibabaDataSource1" parent="abstractDataSource"
+		p:url="jdbc:mysql://127.0.0.1:3306/crawler_db1?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+		p:username="crawler_db"
+		p:password="crawler_db"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="20" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="10" />
+	    <property name="minIdle" value="10" />
+	</bean>
+	<bean id="alibabaDataSource2" parent="abstractDataSource"
+		p:url="jdbc:mysql://127.0.0.1:3306/crawler_db2?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+		p:username="crawler_db"
+		p:password="crawler_db"> 
+	    <!-- 配置最大 -->
+	    <property name="maxActive" value="20" />
+	    <!-- 配置初始化大小、最小 -->
+	    <property name="initialSize" value="10" />
+	    <property name="minIdle" value="10" />
+	</bean>
+	<bean id="routingDataSource" class="org.danielli.xultimate.jdbc.datasource.lookup.RoutingDataSource">
+		<property name="targetDataSources">
+			<map>
+				<entry key="192.168.1.2:3306:crawler_db" value-ref="alibabaDataSource1"></entry>
+				<entry key="192.168.1.3:3306:crawler_db" value-ref="alibabaDataSource2"></entry>
+			</map>
+		</property>
+	</bean>
+	<jdbc:initialize-database enabled="true" data-source="alibabaDataSource1">
+		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/alibaba_init.sql"/>
+	</jdbc:initialize-database>
+	<jdbc:initialize-database enabled="true" data-source="alibabaDataSource2">
+		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/alibaba_init.sql"/>
+	</jdbc:initialize-database>
+	
+	<bean id="alibabaSqlSessionFactory" class="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" 
+		p:dataSource-ref="routingDataSource" p:typeAliasesPackage="alibaba.po"
+		p:mapperLocations="classpath:alibaba/mybatis/*DAO.xml">
+		<property name="typeHandlers">
+			<array>
+				<bean class="org.danielli.xultimate.orm.mybatis.type.BigDecimalTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.ClobNullParameterTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.StringNullParameterTypeHandler" />
+			</array>
+		</property>
+		<property name="configuration">
+			<bean class="org.apache.ibatis.session.Configuration">
+				<!-- 全局映射器启用缓存 -->
+				<property name="cacheEnabled" value="false" />
+				<!-- true表示启动延迟加载，false表示禁用延迟加载 -->
+				<property name="lazyLoadingEnabled" value="false" />
+				<!-- lazyLoadingEnabled=true时，true表示当访问对象中一个懒对象属性时，将完全加载这个对象的所有懒对象属性。false，当延迟加载时，按需加载对象属性。默认为true -->
+				<property name="aggressiveLazyLoading" value="false" />
+				<!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+				<property name="multipleResultSetsEnabled" value="true" />
+				<!-- 允许使用列标签代替列名 -->
+				<property name="useColumnLabel" value="true" />
+				<!-- 允许使用自定义的主建键 -->
+				<property name="useGeneratedKeys" value="true" />
+				<!-- 给予被嵌套的resultMap以字段－属性的映射支持 -->
+				<property name="autoMappingBehavior" value="FULL" />
+				<!-- 对于批量更新操作缓存SQL以提高性能 -->
+				<property name="defaultExecutorType" value="BATCH" />
+				<!-- 数据库超过25000秒仍未响应则超时 -->
+				<property name="defaultStatementTimeout" value="25000" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="alibabaSqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" c:sqlSessionFactory-ref="alibabaSqlSessionFactory" />
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" 
+		p:processPropertyPlaceHolders="true"  p:sqlSessionTemplateBeanName="alibabaSqlSessionTemplate" 
+		p:basePackage="alibaba.dao"
+		p:annotationClass="org.danielli.xultimate.orm.mybatis.MyBatisRepository" />
+		
+	<bean id="sqlSessionFactory" class="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" 
+		p:dataSource-ref="shardDataSource" p:typeAliasesPackage="org.danielli.xultimate.shard.po"
+		p:mapperLocations="classpath:/mybatis/*DAO.xml">
+		<property name="typeHandlers">
+			<array>
+				<bean class="org.danielli.xultimate.orm.mybatis.type.BigDecimalTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.ClobNullParameterTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.StateSetTypeHandler" />
+				<bean class="org.danielli.xultimate.orm.mybatis.type.StringNullParameterTypeHandler" />
+			</array>
+		</property>
+		<property name="configuration">
+			<bean class="org.apache.ibatis.session.Configuration">
+				<!-- 全局映射器启用缓存 -->
+				<property name="cacheEnabled" value="false" />
+				<!-- true表示启动延迟加载，false表示禁用延迟加载 -->
+				<property name="lazyLoadingEnabled" value="false" />
+				<!-- lazyLoadingEnabled=true时，true表示当访问对象中一个懒对象属性时，将完全加载这个对象的所有懒对象属性。false，当延迟加载时，按需加载对象属性。默认为true -->
+				<property name="aggressiveLazyLoading" value="false" />
+				<!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+				<property name="multipleResultSetsEnabled" value="true" />
+				<!-- 允许使用列标签代替列名 -->
+				<property name="useColumnLabel" value="true" />
+				<!-- 允许使用自定义的主建键 -->
+				<property name="useGeneratedKeys" value="true" />
+				<!-- 给予被嵌套的resultMap以字段－属性的映射支持 -->
+				<property name="autoMappingBehavior" value="FULL" />
+				<!-- 对于批量更新操作缓存SQL以提高性能 -->
+				<property name="defaultExecutorType" value="BATCH" />
+				<!-- 数据库超过25000秒仍未响应则超时 -->
+				<property name="defaultStatementTimeout" value="25000" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" c:sqlSessionFactory-ref="sqlSessionFactory" />
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" 
+		p:processPropertyPlaceHolders="true"  p:sqlSessionTemplateBeanName="sqlSessionTemplate" 
+		p:basePackage="org.danielli.xultimate.shard"
+		p:annotationClass="org.danielli.xultimate.orm.mybatis.MyBatisRepository" />
+	<context:component-scan base-package="alibaba" />
+</beans>

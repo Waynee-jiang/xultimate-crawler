@@ -3,7 +3,7 @@ package alibaba.po;
 import java.io.Serializable;
 import java.util.Date;
 
-import alibaba.po.Member.EducatType;
+import alibaba.po.e.EducatType;
 
 public class EduExp implements Serializable {
 	private static final long serialVersionUID = 5365576927170156421L;

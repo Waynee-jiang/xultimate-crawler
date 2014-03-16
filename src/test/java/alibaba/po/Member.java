@@ -3,6 +3,13 @@ package alibaba.po;
 import java.io.Serializable;
 import java.util.Date;
 
+import alibaba.po.e.BloodType;
+import alibaba.po.e.EducatType;
+import alibaba.po.e.IdentityType;
+import alibaba.po.e.IncomeType;
+import alibaba.po.e.ReligionType;
+import alibaba.po.e.Sex;
+
 /**
  * 会员信息
  * 
@@ -11,84 +18,6 @@ import java.util.Date;
  */
 public class Member implements Serializable {
 	
-	/**
-	 * 性别
-	 * @author toc
-	 *
-	 */
-	public enum Sex {
-		male, female
-	}
-	
-	/**
-	 * 身份类型
-	 * @author toc
-	 *
-	 */
-	public enum IdentityType {
-		qydw, 	// 企业单位
-		sydw, 	// 事业单位或社会团体
-		gtjy, 	// 个体经营
-		gr		// 个人
-	}
-	
-	/**
-	 * 收入类型
-	 * @author toc
-	 *
-	 */
-	public enum IncomeType {
-		q0,		// 保密
-		q1,		// 月收入1000以下
-		q3,		// 月收入1001-3000
-		q6,		// 月收入3001-6000
-		q10,	// 月收入6001-10000
-		q11		// 月收入10000以上
-	}
-	
-	/**
-	 * 血型
-	 * @author toc
-	 *
-	 */
-	public enum BloodType {
-		A,	// A型
-		B, 	// B型
-		AB,	// AB型
-		O, 	// O型
-		N	// 保密
-	}
-	
-	/**
-	 * 学历
-	 * @author toc
-	 *
-	 */
-	public enum EducatType {
-		xx,		// 小学
-		cz,		// 初中
-		gz,		// 高中
-		zz,		// 中专
-		dz,		// 大专
-		bk,		// 本科
-		ss,		// 硕士
-		bs,		// 博士
-		bm		// 保密
-	}
-	
-	/**
-	 * 宗教
-	 * @author toc
-	 *
-	 */
-	public enum ReligionType {
-		jdj,	// 基督教
-		yslj,	// 伊斯兰教
-		fj,		// 佛教
-		qt,		// 其他
-		w		// 无
-	}
-
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;				// 会员ID

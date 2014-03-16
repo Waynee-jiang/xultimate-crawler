@@ -50,15 +50,15 @@ public class MemberBizImpl implements MemberBiz {
 		Boolean isNewId = shardedJedisTemplate.execute(new ShardedJedisReturnedCallback<Boolean>() {
 			@Override
 			public Boolean doInShardedJedis(ShardedJedis shardedJedis) throws Exception {
-				String memberIdKey = FormatterUtils.format("Member:alibabaId:{1}", member.getAlibabaId());
+				String memberIdKey = FormatterUtils.format("Member:alibabaId:{0}", member.getAlibabaId());
 				String memberId = shardedJedis.get(memberIdKey);
 				if (StringUtils.isEmpty(memberId)) {
-					String memberIdKeyLock = FormatterUtils.format("{1}.lock", memberIdKey);
+					String memberIdKeyLock = FormatterUtils.format("{0}.lock", memberIdKey);
 					if (memcachedClientMutex.tryLock(memcachedClient, memberIdKeyLock)) {
 						try {
 							Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
 							shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
-							member.setId(member.getId());
+							member.setId(tmpMemberId);
 							return true;
 						} finally {
 							memcachedClientMutex.unlock(memcachedClient, memberIdKeyLock);
@@ -69,7 +69,7 @@ public class MemberBizImpl implements MemberBiz {
 					}
 				} else {
 					member.setId(NumberUtils.createLong(memberId));
-					String hasSaveKey = FormatterUtils.format("{1}.save", memberIdKey);
+					String hasSaveKey = FormatterUtils.format("{0}.save", memberIdKey);
 					String hasSave = shardedJedis.get(hasSaveKey);
 					if (BooleanUtils.isFalse((BooleanUtils.toBooleanObject(hasSave)))) {
 						shardedJedis.del(hasSaveKey);
@@ -98,15 +98,15 @@ public class MemberBizImpl implements MemberBiz {
 		return shardedJedisTemplate.execute(new ShardedJedisReturnedCallback<Long>() {
 			@Override
 			public Long doInShardedJedis(ShardedJedis shardedJedis) throws Exception {
-				String memberIdKey = FormatterUtils.format("Member:alibabaId:{1}", alibabaId);
+				String memberIdKey = FormatterUtils.format("Member:alibabaId:{0}", alibabaId);
 				String memberId = shardedJedis.get(memberIdKey);
 				if (StringUtils.isEmpty(memberId)) {
-					String memberIdKeyLock = FormatterUtils.format("{1}.lock", memberIdKey);
+					String memberIdKeyLock = FormatterUtils.format("{0}.lock", memberIdKey);
 					if (memcachedClientMutex.tryLock(memcachedClient, memberIdKeyLock)) {
 						try {
 							Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
-							shardedJedis.set(memberIdKey, String.valueOf(memberId));
-							shardedJedis.set(FormatterUtils.format("{1}.save", memberIdKey), "false");
+							shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
+							shardedJedis.set(FormatterUtils.format("{0}.save", memberIdKey), "false");
 							return tmpMemberId;
 						} finally {
 							memcachedClientMutex.unlock(memcachedClient, memberIdKeyLock);

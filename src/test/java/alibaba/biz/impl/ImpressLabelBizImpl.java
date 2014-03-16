@@ -49,7 +49,7 @@ public class ImpressLabelBizImpl implements ImpressLabelBiz {
 		return shardedJedisTemplate.execute(new ShardedJedisReturnedCallback<Long>() {
 			@Override
 			public Long doInShardedJedis(ShardedJedis shardedJedis) throws Exception {
-				String labelIdKey = FormatterUtils.format("ImpressLabel:labelName:{1}", labelName);
+				String labelIdKey = FormatterUtils.format("ImpressLabel:labelName:{0}", labelName);
 				String labelId = shardedJedis.get(labelIdKey);
 				return NumberUtils.createLong(labelId);
 			}
@@ -61,14 +61,15 @@ public class ImpressLabelBizImpl implements ImpressLabelBiz {
 		Boolean isNewId = shardedJedisTemplate.execute(new ShardedJedisReturnedCallback<Boolean>() {
 			@Override
 			public Boolean doInShardedJedis(ShardedJedis shardedJedis) throws Exception {
-				String labelIdKey = FormatterUtils.format("ImpressLabel:labelName:{1}", impressLabel.getLabelName());
+				String labelIdKey = FormatterUtils.format("ImpressLabel:labelName:{0}", impressLabel.getLabelName());
 				String labelId = shardedJedis.get(labelIdKey);
 				if (StringUtils.isEmpty(labelId)) {
-					String labelIdKeyLock = FormatterUtils.format("{1}.lock", labelIdKey);
+					String labelIdKeyLock = FormatterUtils.format("{0}.lock", labelIdKey);
 					if (memcachedClientMutex.tryLock(memcachedClient, labelIdKeyLock)) {
 						try {
-							labelId = String.valueOf(dataFieldMaxValueIncrementer.nextLongValue());
-							impressLabel.setId(NumberUtils.createLong(shardedJedis.set(labelIdKey, labelId)));
+							Long tmpLabelId = dataFieldMaxValueIncrementer.nextLongValue();
+							shardedJedis.set(labelIdKey, String.valueOf(tmpLabelId));
+							impressLabel.setId(tmpLabelId);
 							return true;
 						} finally {
 							memcachedClientMutex.unlock(memcachedClient, labelIdKeyLock);

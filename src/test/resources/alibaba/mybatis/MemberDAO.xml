@@ -10,10 +10,18 @@
 		profile, interests, self_intr, member_acc, register_time, last_login, create_time, update_time) 
 		VALUES 
 		(
-		#{id}, #{alibabaId}, #{name}, #{sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{identity, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{email}, #{phone}, #{telephone}, #{fax},
-		#{liveProvince}, #{liveCity}, #{address}, #{pcode}, #{position}, #{companyName}, #{companyUrlInAlibaba},
-		#{creditYear}, #{headImageUrl}, #{birthday}, #{bloodType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{hometown}, #{income, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{educat, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, #{religion, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
-		#{profile}, #{interests}, #{selfIntr}, #{memberAcc}, #{registTime}, #{lastLogin}, #{createTime}, #{updateTime}
+		#{member.id}, #{member.alibabaId}, #{member.name}, 
+		#{member.sex, javaType=alibaba.po.e.Sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+		#{member.identity, javaType=alibaba.po.e.IdentityType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+		#{member.email}, #{member.phone}, #{member.telephone}, #{member.fax},
+		#{member.liveProvince}, #{member.liveCity}, #{member.address}, #{member.pcode}, #{member.position}, #{member.companyName}, #{member.companyUrlInAlibaba},
+		#{member.creditYear}, #{member.headImageUrl}, #{member.birthday}, 
+		#{member.bloodType, javaType=alibaba.po.e.BloodType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+		#{member.hometown}, 
+		#{member.income, javaType=alibaba.po.e.IncomeType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+		#{member.educat, javaType=alibaba.po.e.EducatType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}, 
+		#{member.religion, javaType=alibaba.po.e.ReligionType, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+		#{member.profile}, #{member.interests}, #{member.selfIntr}, #{member.memberAcc}, #{member.registTime}, #{member.lastLogin}, #{member.createTime}, #{member.updateTime}
 		)
 	</insert>
 	

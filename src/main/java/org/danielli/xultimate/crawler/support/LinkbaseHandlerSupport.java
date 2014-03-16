@@ -55,10 +55,10 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 	@Resource(name = "shardedJedisTemplate")
 	private ShardedJedisTemplate shardedJedisTemplate;
 
-	@Resource(name = "fastJSONTemplate")
+	@Resource(name = "jsonTemplate")
 	private JSONTemplate jsonTemplate;
 	
-	@Resource(name = "spelFormatter")
+	@Resource(name = "formatter")
 	private Formatter<String, Map<String, Object>, String> formatter;
 	
 	@Resource(name = "threadPoolTaskExecutor")

@@ -5,7 +5,7 @@
 	<insert id="saveMemberFollow">
 		INSERT INTO MEMBER_FOLLOW_${memberShardId} (member_id, follow_member_id, create_time)
 		VALUES 
-		(#{memberId}, #{followMemberId}, #{createTime})
+		(#{memberFollow.memberId}, #{memberFollow.followMemberId}, #{memberFollow.createTime})
 	</insert>
 	
 </mapper> 

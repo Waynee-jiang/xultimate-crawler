@@ -6,7 +6,7 @@
 		INSERT INTO MEMBER_IMPRESS_LABEL_${shardId} 
 		(member_id, impress_label_id, create_time) 
 		VALUES 
-		(#{memberId}, #{impressLabelId}, #{createTime})
+		(#{memberImpressLabel.memberId}, #{memberImpressLabel.impressLabelId}, #{memberImpressLabel.createTime})
 	</insert>
 	
 </mapper> 
