@@ -16,7 +16,12 @@
 * 提供JsoupAbstractUrlResolver，用于具体解析已被Jsoup处理的URL的Document。可实现此类完成具体URL解析功能。
 * 提供ShutdownMonitorThread，内部使用Netty作为服务端，处理远程关闭功能。
 * 第一版远程关闭功能采用Socket/ServerSocket处理，第二版替换为Netty，Handler内单独采用Protobuf作为序列化和解序列化处理。此次将Netty部分重新整理并提取到xultimate-context工程，同时内置序列化和解序列化处理。
+
+具体定向抓取展示。
+
 * 测试包下包含了具体网站的抓取和解析处理，现已对具体的UrlResolver进行了加密处理，其他部分作为公开展示。
 * 测试包下的shard由原来的简单的hash方式，改成采用xultimate-shard提供的服务处理。
 * 测试包下的数据提炼存储由JdbcTemplate改成有MyBatis处理。
-* 测试包下的主键生成器和shard服务为演示方便，采用集成进来的方式，这两种服务都支持分布式的部署，因为可是情况而定。
+* 数据源采用RoutingDataSource处理，其无法支持分布式事物。
+* RoutingProxyDataSourceFactoryBean也提供了RoutingDataSource的功能。且配合RoutingDataSourceTransactionManager利用Spring事物注解从使用习惯上满足分布式事物处理。在xultimate-jdbc工程中有展示。
+* 测试包下的主键生成器和shard服务为演示方便，采用集成进来的方式，这两种服务都支持分布式的部署，可视情况而定。
