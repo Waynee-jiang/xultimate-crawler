@@ -2,7 +2,7 @@ package alibaba.biz.impl;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.jdbc.datasource.lookup.RoutingDataSourceUtils;
+import org.danielli.xultimate.jdbc.datasource.lookup.DataSourceContext;
 import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.joda.time.DateTime;
@@ -27,7 +27,7 @@ public class MemberImpressLabelBizImpl implements MemberImpressLabelBiz {
 			memberImpressLabel.setCreateTime(new DateTime().toDate());
 		}
 		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER", memberImpressLabel.getMemberId());
-		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
+		DataSourceContext.setCurrentLookupKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 		memberImpressLabelDAO.saveMemberImpressLabel(shardInfo.getPartitionedTableShardId(), memberImpressLabel);
 	}
 

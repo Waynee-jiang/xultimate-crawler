@@ -2,7 +2,7 @@ package alibaba.biz.impl;
 
 import javax.annotation.Resource;
 
-import org.danielli.xultimate.jdbc.datasource.lookup.RoutingDataSourceUtils;
+import org.danielli.xultimate.jdbc.datasource.lookup.DataSourceContext;
 import org.danielli.xultimate.shard.ShardInfoGenerator;
 import org.danielli.xultimate.shard.dto.ShardInfo;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,8 @@ public class MemberFanBizImpl implements MemberFanBiz {
 	@Override
 	public void saveMemberFan(MemberFan memberFan) {
 		ShardInfo shardInfo = shardInfoGenerator.createShardInfo("crawler_db", "MEMBER_RELATION", memberFan.getMemberId());
-		RoutingDataSourceUtils.setRoutingDataSourceKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
+		DataSourceContext.setCurrentLookupKey(shardInfo.getVirtualRoutingDataSourceKey("crawler_db"));
 		memberFanDAO.saveMemberFan(shardInfo.getPartitionedTableShardId(), memberFan);
-
 	}
 
 }
