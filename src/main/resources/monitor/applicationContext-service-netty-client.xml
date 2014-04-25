@@ -36,12 +36,13 @@
 		</entry>
 	</util:map>
 	
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtobufCodec" c:rpcSerializer-ref="rpcProtobufSerializer" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtostuffCodec" c:serializer-ref="rpcProtostuffSerializerProxy" c:deserializer-ref="rpcProtostuffDeserializerProxy" />
+	
 	<!-- 
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtostuffCodec" c:rpcSerializer-ref="rpcProtostuffSerializer" />
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.KryoCodec" c:rpcSerializer-ref="rpcKryoSerializer" />
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ObjectCodec" c:rpcSerializer-ref="objectSerializer" />
-	 -->
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtobufCodec" c:serializer-ref="rpcProtobufSerializerProxy" c:deserializer-ref="rpcProtobufDeserializerProxy" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.KryoCodec" c:serializer-ref="rpcKryoSerializerProxy" c:deserializer-ref="rpcKryoDeserializerProxy" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ObjectCodec" c:serializer-ref="rpcObjectSerializerProxy" c:deserializer-ref="rpcObjectDeserializerProxy" />
+ 	 -->
 	<bean id="handler" class="org.danielli.xultimate.crawler.monitor.ClientHandler" />
 	<util:map id="channelHandlerAdapterBeanNameMap" map-class="java.util.LinkedHashMap">
 		<entry key="codec">
