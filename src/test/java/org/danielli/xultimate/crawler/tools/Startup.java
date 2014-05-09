@@ -37,10 +37,13 @@ public class Startup {
 			LineIterator lineIterator = FileUtils.lineIterator(new File(args[0]), CharEncoding.UTF_8);
 			try {
 				while (lineIterator.hasNext()) {
-					Map<String, Object> linkUrlMap = new HashMap<>();
-					linkUrlMap.put(LinkbaseHandlerSupport.LINK_COLUMN_NAME, lineIterator.next());
-					linkUrlMap.put(LinkbaseHandlerSupport.LINK_CREATE_TIME, System.currentTimeMillis());
-					linkUrls.add(linkUrlMap);
+					String url = lineIterator.next();
+					if (StringUtils.isNotBlank(url)) {
+						Map<String, Object> linkUrlMap = new HashMap<>();
+						linkUrlMap.put(LinkbaseHandlerSupport.LINK_COLUMN_NAME, url);
+						linkUrlMap.put(LinkbaseHandlerSupport.LINK_CREATE_TIME, System.currentTimeMillis());
+						linkUrls.add(linkUrlMap);
+					}
 				}
 			} finally {
 				LineIterator.closeQuietly(lineIterator);

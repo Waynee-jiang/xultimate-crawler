@@ -74,10 +74,6 @@
 	    <property name="initialSize" value="10" />
 	    <property name="minIdle" value="10" />
 	</bean>
-	
-	<jdbc:initialize-database enabled="true" data-source="shardDataSource">
-		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/shard/shard_db_init.sql"/>
-	</jdbc:initialize-database>
 
 	<bean id="alibabaDataSource1" parent="abstractDataSource"
 		p:url="jdbc:mysql://127.0.0.1:3306/crawler_db1?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
@@ -107,12 +103,6 @@
 			</map>
 		</property>
 	</bean>
-	<jdbc:initialize-database enabled="true" data-source="alibabaDataSource1">
-		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/alibaba_init.sql"/>
-	</jdbc:initialize-database>
-	<jdbc:initialize-database enabled="true" data-source="alibabaDataSource2">
-		<jdbc:script separator=";" execution="INIT" location="classpath:alibaba/alibaba_init.sql"/>
-	</jdbc:initialize-database>
 	
 	<bean id="alibabaSqlSessionFactory" class="org.danielli.xultimate.orm.mybatis.SqlSessionFactoryBean" 
 		p:dataSource-ref="routingDataSource" p:typeAliasesPackage="alibaba.po"
