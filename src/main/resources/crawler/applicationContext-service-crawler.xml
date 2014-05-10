@@ -49,5 +49,5 @@
 		</property>
 	</bean>
 	
-	<bean id="jsonTemplate" class="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate" />
+	<util:constant id="jsonTemplate" static-field="org.danielli.xultimate.core.json.fastjson.FastJSONTemplate.INSTANCE"/>
 </beans>

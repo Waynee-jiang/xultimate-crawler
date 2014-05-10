@@ -20,7 +20,7 @@ public class Shutdown {
 			System.exit(1);
 		}
 
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:monitor/applicationContext-service-netty-client.xml", "classpath:monitor//applicationContext-service-serializer.xml");
+		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:monitor/applicationContext-service-netty-client.xml");
 		try {
 			Bootstrap bootstrap = applicationContext.getBean(Bootstrap.class);
 			Channel channel = bootstrap.connect(args[0], NumberUtils.createInteger(args[1])).sync().channel();
