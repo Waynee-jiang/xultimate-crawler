@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import org.danielli.xultimate.context.format.Formatter;
 import org.danielli.xultimate.context.kvStore.redis.RedisException;
 import org.danielli.xultimate.context.kvStore.redis.jedis.ShardedJedisCallback;
-import org.danielli.xultimate.context.kvStore.redis.jedis.ShardedJedisReturnedCallback;
 import org.danielli.xultimate.context.kvStore.redis.jedis.support.ShardedJedisTemplate;
 import org.danielli.xultimate.core.json.JSONTemplate;
 import org.danielli.xultimate.core.json.ValueType;
@@ -67,7 +66,7 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 	@Override
 	public String getLinkId() {
 		try {
-			return shardedJedisTemplate.execute(new ShardedJedisReturnedCallback<String>() {
+			return shardedJedisTemplate.execute(new ShardedJedisCallback<String>() {
 				@Override
 				public String doInShardedJedis(ShardedJedis shardedJedis) {
 					String linkId = shardedJedis.getShard(MAIN_QUEUE).rpoplpush(MAIN_QUEUE, BACKUP_QUEUE);
@@ -85,7 +84,7 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 	@Override
 	public String getLinkUrlByLinkId(final String linkId) {
 		try {
-			return shardedJedisTemplate.execute(new ShardedJedisReturnedCallback<String>() {
+			return shardedJedisTemplate.execute(new ShardedJedisCallback<String>() {
 				@Override
 				public String doInShardedJedis(ShardedJedis shardedJedis) {
 					Map<String, Object> parameter = new HashMap<>();
@@ -107,15 +106,16 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 			@Override
 			public void run() {
 				try {
-					shardedJedisTemplate.execute(new ShardedJedisCallback() {
+					shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 						
 						@Override
-						public void doInShardedJedis(ShardedJedis shardedJedis) {
+						public Void doInShardedJedis(ShardedJedis shardedJedis) {
 							ShardedJedisPipeline jedisPipeline = shardedJedis.pipelined();
 							jedisPipeline.lrem(BACKUP_QUEUE, 1, linkId);
 							jedisPipeline.zadd(COMPLETION_SET, System.currentTimeMillis(), linkId);
 							jedisPipeline.zrem(UNABLE_SET, linkId);
 							jedisPipeline.sync();
+							return null;
 						}
 					});
 				} catch (RedisException e) {
@@ -131,14 +131,15 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 			@Override
 			public void run() {
 				try {
-					shardedJedisTemplate.execute(new ShardedJedisCallback() {
+					shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 						
 						@Override
-						public void doInShardedJedis(ShardedJedis shardedJedis) {
+						public Void doInShardedJedis(ShardedJedis shardedJedis) {
 							ShardedJedisPipeline jedisPipeline = shardedJedis.pipelined();
 							jedisPipeline.lrem(BACKUP_QUEUE, 1, linkId);
 							jedisPipeline.zincrby(UNABLE_SET, 1, linkId);
 							jedisPipeline.sync();
+							return null;
 						}
 					});
 				} catch (RedisException e) {
@@ -154,10 +155,10 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 			@Override
 			public void run() {
 				try {
-					shardedJedisTemplate.execute(new ShardedJedisCallback() {
+					shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 
 						@Override
-						public void doInShardedJedis(ShardedJedis shardedJedis) {
+						public Void doInShardedJedis(ShardedJedis shardedJedis) {
 							for (Map<String, Object> linkMap : linkUrlList) {
 								String linkUrl = (String) linkMap.get(LINK_COLUMN_NAME);
 								try {
@@ -177,6 +178,7 @@ public class LinkbaseHandlerSupport implements LinkbaseHandler {
 									LOGGER.error("添加" + linkUrl + "失败: " + e.getMessage(), e);
 								}
 							}
+							return null;
 						}
 					});
 				} catch (Exception e) {

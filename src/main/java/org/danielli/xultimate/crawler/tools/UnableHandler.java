@@ -23,10 +23,10 @@ public class UnableHandler {
 		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath*:applicationContext-service-crawler*.xml");
 		ShardedJedisTemplate shardedJedisTemplate = applicationContext.getBean("shardedJedisTemplate", ShardedJedisTemplate.class);
 		try {
-			shardedJedisTemplate.execute(new ShardedJedisCallback() {
+			shardedJedisTemplate.execute(new ShardedJedisCallback<Void>() {
 				
 				@Override
-				public void doInShardedJedis(ShardedJedis shardedJedis) {
+				public Void doInShardedJedis(ShardedJedis shardedJedis) {
 					Set<String> unalbeSet = shardedJedis.zrangeByScore(LinkbaseHandlerSupport.UNABLE_SET, 1, 2);
 					try {
 						shardedJedis.lpush(LinkbaseHandlerSupport.MAIN_QUEUE, unalbeSet.toArray(ArrayUtils.newInstance(String.class, unalbeSet.size())));
@@ -35,6 +35,7 @@ public class UnableHandler {
 						System.out.println("添加到队列失败: " + e.getMessage());
 						e.printStackTrace();
 					} 
+					return null;
 				}
 			});
 		} catch (RedisException e) {

@@ -45,12 +45,12 @@
 		</entry>
 	</util:map>
 	
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtostuffCodec" />
-	<!-- 
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ProtobufCodec" />
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.KryoCodec" />
-	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.ObjectCodec" />
- 	 -->
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.RpcProtostuffObjectCodec" />
+	<!--
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.RpcProtobufObjectCodec" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.RpcKryoObjectCodec" />
+	<bean id="codec" class="org.danielli.xultimate.context.net.netty.codec.JavaObjectCodec" />
+ 	  -->
 	<bean id="handler" class="org.danielli.xultimate.crawler.monitor.ServerHandler" c:statusChecker-ref="statusCheckerSupport" />
 	<util:map id="channelHandlerAdapterBeanNameMap" map-class="java.util.LinkedHashMap">
 		<entry key="codec">
