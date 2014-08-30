@@ -97,5 +97,5 @@
   	
   	<bean id="xMemcachedClient" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.XMemcachedClient" c:xMemcachedClient-ref="memcachedClient" />
 
-	<bean id="memcachedLockFactory" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory" p:xMemcachedClient-ref="xMemcachedClient" />
+	<bean id="memcachedLockFactory" class="org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory" p:xMemcachedClient-ref="memcachedClient" />
 </beans>

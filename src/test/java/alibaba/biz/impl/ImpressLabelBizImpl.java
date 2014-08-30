@@ -8,6 +8,7 @@ import net.rubyeye.xmemcached.MemcachedClient;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.danielli.xultimate.context.format.FormatterUtils;
+import org.danielli.xultimate.context.kvStore.memcached.MemcachedException;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory.MemcachedLock;
 import org.danielli.xultimate.context.kvStore.redis.jedis.ShardedJedisCallback;
@@ -74,18 +75,25 @@ public class ImpressLabelBizImpl implements ImpressLabelBiz, InitializingBean {
 				String labelId = shardedJedis.get(labelIdKey);
 				if (StringUtils.isEmpty(labelId)) {
 					String labelIdKeyLock = FormatterUtils.format("{0}.lock", labelIdKey);
-					if (memcachedLock.tryLock(labelIdKeyLock)) {
-						try {
-							Long tmpLabelId = dataFieldMaxValueIncrementer.nextLongValue();
-							shardedJedis.set(labelIdKey, String.valueOf(tmpLabelId));
-							impressLabel.setId(tmpLabelId);
-							return true;
-						} finally {
-							memcachedLock.unlock(labelIdKeyLock);
+					try {
+						if (memcachedLock.tryLock(labelIdKeyLock)) {
+							try {
+								Long tmpLabelId = dataFieldMaxValueIncrementer.nextLongValue();
+								shardedJedis.set(labelIdKey, String.valueOf(tmpLabelId));
+								impressLabel.setId(tmpLabelId);
+								return true;
+							} finally {
+								memcachedLock.unlock(labelIdKeyLock);
+							}
+						} else {
+							Thread.sleep(500);
+							return doInShardedJedis(shardedJedis);
 						}
-					} else {
-						Thread.sleep(500);
-						return doInShardedJedis(shardedJedis);
+					} catch (MemcachedException e) {
+						Long tmpLabelId = dataFieldMaxValueIncrementer.nextLongValue();
+						shardedJedis.set(labelIdKey, String.valueOf(tmpLabelId));
+						impressLabel.setId(tmpLabelId);
+						return true;
 					}
 				}
 				impressLabel.setId(NumberUtils.createLong(labelId));

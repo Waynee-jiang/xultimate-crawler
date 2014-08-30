@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.danielli.xultimate.context.format.FormatterUtils;
+import org.danielli.xultimate.context.kvStore.memcached.MemcachedException;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory;
 import org.danielli.xultimate.context.kvStore.memcached.xmemcached.support.MemcachedLockFactory.MemcachedLock;
 import org.danielli.xultimate.context.kvStore.redis.jedis.ShardedJedisCallback;
@@ -57,18 +58,25 @@ public class MemberBizImpl implements MemberBiz, InitializingBean {
 				String memberId = shardedJedis.get(memberIdKey);
 				if (StringUtils.isEmpty(memberId)) {
 					String memberIdKeyLock = FormatterUtils.format("{0}.lock", memberIdKey);
-					if (memcachedLock.tryLock(memberIdKeyLock)) {
-						try {
-							Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
-							shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
-							member.setId(tmpMemberId);
-							return true;
-						} finally {
-							memcachedLock.unlock(memberIdKeyLock);
+					try {
+						if (memcachedLock.tryLock(memberIdKeyLock)) {
+							try {
+								Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
+								shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
+								member.setId(tmpMemberId);
+								return true;
+							} finally {
+								memcachedLock.unlock(memberIdKeyLock);
+							}
+						} else {
+							Thread.sleep(500);
+							return doInShardedJedis(shardedJedis);
 						}
-					} else {
-						Thread.sleep(500);
-						return doInShardedJedis(shardedJedis);
+					} catch (MemcachedException e) {
+						Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
+						shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
+						member.setId(tmpMemberId);
+						return true;
 					}
 				} else {
 					member.setId(NumberUtils.createLong(memberId));
@@ -105,18 +113,25 @@ public class MemberBizImpl implements MemberBiz, InitializingBean {
 				String memberId = shardedJedis.get(memberIdKey);
 				if (StringUtils.isEmpty(memberId)) {
 					String memberIdKeyLock = FormatterUtils.format("{0}.lock", memberIdKey);
-					if (memcachedLock.tryLock(memberIdKeyLock)) {
-						try {
-							Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
-							shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
-							shardedJedis.set(FormatterUtils.format("{0}.save", memberIdKey), "false");
-							return tmpMemberId;
-						} finally {
-							memcachedLock.unlock(memberIdKeyLock);
+					try {
+						if (memcachedLock.tryLock(memberIdKeyLock)) {
+							try {
+								Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
+								shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
+								shardedJedis.set(FormatterUtils.format("{0}.save", memberIdKey), "false");
+								return tmpMemberId;
+							} finally {
+								memcachedLock.unlock(memberIdKeyLock);
+							}
+						} else {
+							Thread.sleep(500);
+							return doInShardedJedis(shardedJedis);
 						}
-					} else {
-						Thread.sleep(500);
-						return doInShardedJedis(shardedJedis);
+					} catch (MemcachedException e) {
+						Long tmpMemberId = dataFieldMaxValueIncrementer.nextLongValue();
+						shardedJedis.set(memberIdKey, String.valueOf(tmpMemberId));
+						shardedJedis.set(FormatterUtils.format("{0}.save", memberIdKey), "false");
+						return tmpMemberId;
 					}
 				}
 				return NumberUtils.createLong(memberId);
